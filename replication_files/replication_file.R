@@ -365,7 +365,7 @@ num_failures_ifg <- inertia_fg$nevent
 p20_avg_Oij_cr <- quantile(data_cr$avg_Oij, 0.20, na.rm = TRUE)
 p80_avg_Oij_cr <- quantile(data_cr$avg_Oij, 0.80, na.rm = TRUE)
 
-# Create new dataset for predictions
+# Creating new dataset for predictions
 newdata_cr <- data.frame(
   avg_Oij = c(p20_avg_Oij_cr, p80_avg_Oij_cr),
   lnnmem = mean(data_cr$lnnmem, na.rm = TRUE),
@@ -380,17 +380,17 @@ fg_model <- coxph(Surv(fgstart, fgstop, fgstatus) ~ avg_Oij + lnnmem +
                     sum_issues + sum_govtasks + sum_d + nover_live,
                   data = cor_fg_contract, weights = fgwt)
 
-# Get the baseline hazard
+# Getting the baseline hazard
 bh <- basehaz(fg_model)
 
-# Calculate linear predictors for new data
+# Calculating linear predictors for new data
 lp <- predict(fg_model, newdata = newdata_cr, type = "lp")
 
-# Calculate CIF for each covariate pattern
+# Calculating the CIF for each covariate pattern
 cif_low <- 1 - exp(-bh$hazard * exp(lp[1]))
 cif_high <- 1 - exp(-bh$hazard * exp(lp[2]))
 
-# Create data frame for plotting
+# Creating dataframe for plotting
 plot_data <- data.frame(
   time = c(bh$time, bh$time),
   cif = c(cif_low, cif_high),
@@ -399,7 +399,7 @@ plot_data <- data.frame(
                        each = length(bh$time)))
 )
 
-# Create the plot using ggplot2
+# Creating the plot using ggplot2
 ggplot(plot_data, aes(x = time, y = cif, color = overlap)) +
   geom_line(size = 1) +
   labs(x = "Time",
